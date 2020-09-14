@@ -2,15 +2,17 @@ import VaccineTest from "../vaccineTest";
 import Recipient from "../recipient";
 import Covid19Vaccine from "../covid19Vaccine";
 
+const mockAcceptInjection = jest.fn();
+const mockGetHasAntibodies = jest.fn();
+
 jest.mock("../recipient", () => {
   // mock class实现
   return jest.fn().mockImplementation(() =>
   {
-    acceptInjection: mockAcceptInjection
-    getHasAntibodies: mockGetHasAntibodies
-  }
-
-  )
+    return {acceptInjection: mockAcceptInjection,
+            getHasAntibodies: mockGetHasAntibodies
+    };
+  })
 });
 
 beforeEach(() => {
@@ -22,9 +24,9 @@ beforeEach(() => {
 describe("inject", () => {
   test("should recipient accept injection with vaccine", () => {
     // TODO 14: add test here
-    const vaccineTest = new vaccineTest();
+    const vaccineTest = new VaccineTest();
     vaccineTest.inject();
-    expect(acceptInjection).toHaveBeenCalledWith(expect.any(vaccine));
+    expect(mockAcceptInjection).toHaveBeenCalledWith(expect.any(Covid19Vaccine));
 
   });
 });
@@ -32,17 +34,15 @@ describe("inject", () => {
 describe("test", () => {
   test("should get Success if recipient has antibodies", () => {
     // TODO 15: add test here
-    let mockGetHasAntibodies = js.fn().mockImplementation(()=>true);
-    const result = vaccineTest.getHasAntibodies();
-    expect(getHasAntibodies).toHaveBeenCalled();
-    expect(result).toEqual("Vaccine Test Success")
+    mockGetHasAntibodies.mockImplementation(() => true);
+    const vaccineTest = new VaccineTest();
+    expect(vaccineTest.test()).toEqual("Vaccine Test Success");
   });
 
   test("should get Failed if recipient has no antibodies", () => {
     // TODO 16: add test here
-    let mockGetHasAntibodies = js.fn().mockImplementation(()=>false);
-    const result = vaccineTest.getHasAntibodies();
-    expect(getHasAntibodies).toHaveBeenCalled();
-    expect(result).toEqual("Vaccine Test Failed")
+    mockGetHasAntibodies.mockImplementation(() => false);
+    const vaccineTest = new VaccineTest();
+    expect(vaccineTest.test()).toEqual("Vaccine Test Failed");
   });
-});
+ });
